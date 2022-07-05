@@ -50,9 +50,10 @@ class ViewController2: UIViewController {
         guard let owner = repository["owner"] as? [String: Any] else { return }
         guard let imgURL = owner["avatar_url"] as? String else { return }
         URLSession.shared.dataTask(with: URL(string: imgURL)!) { (data, res, err) in
-            let img = UIImage(data: data!)!
-            DispatchQueue.main.async {
-                self.imageLabel.image = img
+            if let img = UIImage(data: data!){ //強制アンラップをオプショナルバインディングに変更
+                DispatchQueue.main.async {
+                    self.imageLabel.image = img
+                }
             }
         }.resume()
     }
