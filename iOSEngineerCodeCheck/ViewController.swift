@@ -11,7 +11,7 @@ class ViewController: UITableViewController, UISearchBarDelegate {
     
     @IBOutlet weak var searchBar: UISearchBar!
     var repository: [[String: Any]]=[]
-    var urlSessionTask: URLSessionTask?
+    var urlSessionTask: URLSessionTask? //オプショナル型→nilが入ることがある
     var searchingWord: String!
     var url: String!
     var index: Int!
@@ -33,18 +33,35 @@ class ViewController: UITableViewController, UISearchBarDelegate {
         urlSessionTask?.cancel()
     }
     
+    /*func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+     searchingWord = searchBar.text!
+     if searchingWord.count != 0 {
+     url = "https://api.github.com/search/repositories?q=\(searchingWord!)"
+     urlSessionTask = URLSession.shared.dataTask(with: URL(string: url)!) { (data, res, err) in
+     if let obj = try! JSONSerialization.jsonObject(with: data!) as? [String: Any] {
+     if let items = obj["items"] as? [[String: Any]] {
+     self.repository = items
+     DispatchQueue.main.async {
+     self.tableView.reloadData()
+     }
+     }
+     }
+     }
+     // これ呼ばなきゃリストが更新されません
+     urlSessionTask?.resume()
+     }
+     }*/
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchingWord = searchBar.text!
-        if searchingWord.count != 0 {
+        if searchingWord.count != 0 {//searchingWordの文字数が0でない時実行される
             url = "https://api.github.com/search/repositories?q=\(searchingWord!)"
             urlSessionTask = URLSession.shared.dataTask(with: URL(string: url)!) { (data, res, err) in
-                if let obj = try! JSONSerialization.jsonObject(with: data!) as? [String: Any] {
-                    if let items = obj["items"] as? [[String: Any]] {
-                        self.repository = items
-                        DispatchQueue.main.async {
-                            self.tableView.reloadData()
-                        }
-                    }
+                guard let obj = try! JSONSerialization.jsonObject(with: data!) as? [String: Any] else { return }//objがnilだったら処理を終了
+                guard let items = obj["items"] as? [[String: Any]] else { return } //itemsがnilだったら処理を終了
+                self.repository = items
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
                 }
             }
             // これ呼ばなきゃリストが更新されません
