@@ -94,5 +94,4 @@ class ViewController: UITableViewController, UISearchBarDelegate {
         index = indexPath.row
         performSegue(withIdentifier: "Detail", sender: self)
     }
-    
 }
