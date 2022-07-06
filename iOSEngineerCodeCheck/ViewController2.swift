@@ -21,7 +21,8 @@ class ViewController2: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let repository = viewController1.repository[viewController1.index]
+        guard let index = viewController1.index else { return }//viewController1.indexがnilの時は処理を終了
+        let repository = viewController1.repository[index]
         languageLabel.text = "Written in \(repository["language"] as? String ?? "")"
         stargazersLabel.text = "\(repository["stargazers_count"] as? Int ?? 0) stars"
         wachersLabel.text = "\(repository["wachers_count"] as? Int ?? 0) watchers"
@@ -45,7 +46,8 @@ class ViewController2: UIViewController {
      }
      }*/
     func getImage(){
-        let repository = viewController1.repository[viewController1.index]
+        guard let index = viewController1.index else { return } //viewController1.indexがnilの時は処理を終了
+        let repository = viewController1.repository[index]
         titleLabel.text = repository["full_name"] as? String
         guard let owner = repository["owner"] as? [String: Any] else { return }
         guard let imgURL = owner["avatar_url"] as? String else { return }

@@ -12,9 +12,9 @@ class ViewController: UITableViewController, UISearchBarDelegate {
     @IBOutlet weak var searchBar: UISearchBar!
     var repository: [[String: Any]]=[]
     var urlSessionTask: URLSessionTask?
-    var searchingWord: String!
+    var searchingWord: String?
     var url: String!
-    var index: Int! //!と?：オプショナル型→nilが入ることがある
+    var index: Int? //!と?：オプショナル型→nilが入ることがある !: 暗黙的アンラップ型
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,18 +55,17 @@ class ViewController: UITableViewController, UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let searchingWord = searchBar.text{ //強制的アンラップをオプショナルバインディングに変更。searchBar.textがnilでない時実行
             if searchingWord.count != 0{
-            let url = "https://api.github.com/search/repositories?q=\(searchingWord)"
-            urlSessionTask = URLSession.shared.dataTask(with: URL(string: url)!) { (data, res, err) in
-                guard let obj = try! JSONSerialization.jsonObject(with: data!) as? [String: Any] else { return }//objがnilだったら処理を終了 検索窓に空白スペースを入れた時アプリが落ちる：Thread 1: Fatal error: Unexpectedly found nil while unwrapping an Optional value
-                guard let items = obj["items"] as? [[String: Any]] else { return } //itemsがnilだったら処理を終了
-                self.repository = items
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
+                let url = "https://api.github.com/search/repositories?q=\(searchingWord)"
+                urlSessionTask = URLSession.shared.dataTask(with: URL(string: url)!) { (data, res, err) in
+                    guard let obj = try! JSONSerialization.jsonObject(with: data!) as? [String: Any] else { return }//objがnilだったら処理を終了 検索窓に空白スペースを入れた時アプリが落ちる：Thread 1: Fatal error: Unexpectedly found nil while unwrapping an Optional value
+                    guard let items = obj["items"] as? [[String: Any]] else { return } //itemsがnilだったら処理を終了
+                    self.repository = items
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
                 }
-            }
-            // これ呼ばなきゃリストが更新されません
+                // これ呼ばなきゃリストが更新されません
                 urlSessionTask?.resume()
-                
             }
         }else{
             print("serchBar.textがnil")
@@ -75,8 +74,8 @@ class ViewController: UITableViewController, UISearchBarDelegate {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "Detail"{
-            let dtl = segue.destination as! ViewController2
-            dtl.viewController1 = self
+            let dtl = segue.destination as? ViewController2 //強制ダウンキャストas!をas?に変更。dtlがオプショナル型になる
+            dtl?.viewController1 = self
         }
     }
     
