@@ -31,20 +31,6 @@ class ViewController2: UIViewController {
         getImage()
     }
     
-    /*func getImage(){
-     let repository = viewController1.repository[viewController1.index]
-     titleLabel.text = repository["full_name"] as? String
-     if let owner = repository["owner"] as? [String: Any] {
-     if let imgURL = owner["avatar_url"] as? String {
-     URLSession.shared.dataTask(with: URL(string: imgURL)!) { (data, res, err) in
-     let img = UIImage(data: data!)!
-     DispatchQueue.main.async {
-     self.imageLabel.image = img
-     }
-     }.resume()
-     }
-     }
-     }*/
     func getImage(){
         guard let index = viewController1.index else { return } //viewController1.indexがnilの時は処理を終了
         let repository = viewController1.repository[index]
