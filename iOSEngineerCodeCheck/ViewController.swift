@@ -35,7 +35,7 @@ class ViewController: UITableViewController, UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let searchingWord = searchBar.text{ //強制的アンラップをオプショナルバインディングに変更。searchBar.textがnilでない時実行
-            if searchingWord.count != 0{
+            if searchingWord.count != 0 && !searchingWord.contains(" ") { //スペースが入ったときにアプリがクラッシュしないようにした
                 let url = "https://api.github.com/search/repositories?q=\(searchingWord)"
                 urlSessionTask = URLSession.shared.dataTask(with: URL(string: url)!) { (data, res, err) in
                     guard let obj = try! JSONSerialization.jsonObject(with: data!) as? [String: Any] else { return }//objがnilだったら処理を終了 検索窓に空白スペースを入れた時アプリが落ちる：Thread 1: Fatal error: Unexpectedly found nil while unwrapping an Optional value
