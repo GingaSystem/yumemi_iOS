@@ -19,7 +19,7 @@ class ViewController: UITableViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        searchBar.text = "GitHubのリポジトリを検索できるよー"
+        searchBar.text = "GitHubのRepositoryを検索できます"
         searchBar.delegate = self
     }
     
@@ -31,11 +31,12 @@ class ViewController: UITableViewController, UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         urlSessionTask?.cancel()
+        searchBar.searchTextField.textColor = .black
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let searchingWord = searchBar.text{ //強制的アンラップをオプショナルバインディングに変更。searchBar.textがnilでない時実行
-            if searchingWord.count != 0 && !searchingWord.contains(" ") { //スペースが入ったときにアプリがクラッシュしないようにした
+            if searchingWord.count != 0 && !searchingWord.contains(" ") && isAlphanumeric(searchingWord) { //入力を半角英数に限った。またスペースが入ったときにアプリがクラッシュしないようにした
                 let url = "https://api.github.com/search/repositories?q=\(searchingWord)"
                 urlSessionTask = URLSession.shared.dataTask(with: URL(string: url)!) { (data, res, err) in
                     guard let obj = try! JSONSerialization.jsonObject(with: data!) as? [String: Any] else { return }//objがnilだったら処理を終了 検索窓に空白スペースを入れた時アプリが落ちる：Thread 1: Fatal error: Unexpectedly found nil while unwrapping an Optional value
@@ -47,10 +48,18 @@ class ViewController: UITableViewController, UISearchBarDelegate {
                 }
                 // これ呼ばなきゃリストが更新されません
                 urlSessionTask?.resume()
+            }else{
+                searchBar.searchTextField.textColor = .blue
+                searchBar.text = "スペース無しの半角英数字で入力して下さい"
             }
         }else{
-            print("serchBar.textがnil")
+            searchBar.text = "検索ワードが空です"
         }
+    }
+    
+    //検索された文字が半角英数字である時Trueを返す
+    func isAlphanumeric(_ str: String) -> Bool {
+        return !str.isEmpty && str.range(of: "[^a-zA-Z0-9]", options: .regularExpression) == nil
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
