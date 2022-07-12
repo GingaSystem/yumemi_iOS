@@ -10,7 +10,7 @@ import UIKit
 class ViewController: UITableViewController, UISearchBarDelegate {
     
     @IBOutlet weak var searchBar: UISearchBar!
-    var repository: [[String: Any]]=[]
+    var repository: [[String: Any]]=[] //[String: Any]辞書 []リスト 辞書型のリストを空のリストとして初期化
     var urlSessionTask: URLSessionTask?
     var searchingWord: String?
     var url: String!
@@ -39,7 +39,7 @@ class ViewController: UITableViewController, UISearchBarDelegate {
             if searchingWord.count != 0 && !searchingWord.contains(" ") && isAlphanumeric(searchingWord) { //入力を半角英数に限った。またスペースが入ったときにアプリがクラッシュしないようにした
                 let url = "https://api.github.com/search/repositories?q=\(searchingWord)"
                 urlSessionTask = URLSession.shared.dataTask(with: URL(string: url)!) { (data, res, err) in
-                    guard let obj = try! JSONSerialization.jsonObject(with: data!) as? [String: Any] else { return }//objがnilだったら処理を終了 検索窓に空白スペースを入れた時アプリが落ちる：Thread 1: Fatal error: Unexpectedly found nil while unwrapping an Optional value
+                    guard let obj = try! JSONSerialization.jsonObject(with: data!) as? [String: Any] else { return }//objがnilだったら処理を終了
                     guard let items = obj["items"] as? [[String: Any]] else { return } //itemsがnilだったら処理を終了
                     self.repository = items
                     DispatchQueue.main.async {

@@ -25,7 +25,7 @@ class ViewController2: UIViewController {
         let repository = viewController1.repository[index]
         languageLabel.text = "Written in \(repository["language"] as? String ?? "")"
         stargazersLabel.text = "\(repository["stargazers_count"] as? Int ?? 0) stars"
-        wachersLabel.text = "\(repository["wachers_count"] as? Int ?? 0) watchers"
+        wachersLabel.text = "\(repository["watchers_count"] as? Int ?? 0) watchers" //typoを直しました
         forksLabel.text = "\(repository["forks_count"] as? Int ?? 0) forks"
         issuesLabel.text = "\(repository["open_issues_count"] as? Int ?? 0) open issues"
         getImage()
