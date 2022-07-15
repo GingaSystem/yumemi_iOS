@@ -88,6 +88,6 @@ extension ViewController: UISearchBarDelegate {
     
     //検索された文字が半角英数字である時Trueを返す
     func isAlphanumeric(_ str: String) -> Bool {
-        return !str.isEmpty && str.range(of: "[^a-zA-Z0-9]", options: .regularExpression) == nil
+        return !str.isEmpty && str.range(of: "[^a-zA-Z0-9_\\-]", options: .regularExpression) == nil
     }
 }
