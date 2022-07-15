@@ -7,13 +7,13 @@
 //
 
 import UIKit
-class ViewController: UITableViewController, UISearchBarDelegate {
+class ViewController: UITableViewController {
     
     @IBOutlet weak var searchBar: UISearchBar!
     var repository: [[String: Any]]=[] //[String: Any]辞書 []リスト 辞書型のリストを空のリストとして初期化
-    var urlSessionTask: URLSessionTask?
     var searchingWord: String?
     var url: String!
+    var urlSessionTask: URLSessionTask?
     var index: Int? //!と?：オプショナル型→nilが入ることがある !: 暗黙的アンラップ型
     
     override func viewDidLoad() {
@@ -22,6 +22,35 @@ class ViewController: UITableViewController, UISearchBarDelegate {
         searchBar.text = "GitHubのRepositoryを検索できます"
         searchBar.delegate = self
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "Detail"{
+            let dtl = segue.destination as? ViewController2 //強制ダウンキャストas!をas?に変更。dtlがオプショナル型になる
+            dtl?.viewController1 = self
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return repository.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+        let rp = repository[indexPath.row]
+        cell.textLabel?.text = rp["full_name"] as? String ?? ""
+        cell.detailTextLabel?.text = rp["language"] as? String ?? ""
+        cell.tag = indexPath.row
+        return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // 画面遷移時に呼ばれる
+        index = indexPath.row
+        performSegue(withIdentifier: "Detail", sender: self)
+    }
+}
+
+extension ViewController: UISearchBarDelegate {
     
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         // ↓こうすれば初期のテキストを消せる
@@ -60,31 +89,5 @@ class ViewController: UITableViewController, UISearchBarDelegate {
     //検索された文字が半角英数字である時Trueを返す
     func isAlphanumeric(_ str: String) -> Bool {
         return !str.isEmpty && str.range(of: "[^a-zA-Z0-9]", options: .regularExpression) == nil
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "Detail"{
-            let dtl = segue.destination as? ViewController2 //強制ダウンキャストas!をas?に変更。dtlがオプショナル型になる
-            dtl?.viewController1 = self
-        }
-    }
-    
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return repository.count
-    }
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
-        let rp = repository[indexPath.row]
-        cell.textLabel?.text = rp["full_name"] as? String ?? ""
-        cell.detailTextLabel?.text = rp["language"] as? String ?? ""
-        cell.tag = indexPath.row
-        return cell
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // 画面遷移時に呼ばれる
-        index = indexPath.row
-        performSegue(withIdentifier: "Detail", sender: self)
     }
 }
